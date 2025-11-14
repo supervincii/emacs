@@ -1,0 +1,8 @@
+.cache
+auto-save-list/*
+eln-cache/*
+elpa/*
+eshell/*
+forge-database.sqlite
+projects
+transient

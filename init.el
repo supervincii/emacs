@@ -85,6 +85,12 @@
          ("C-h k" . helpful-key)
          ("C-h x" . helpful-command)))
 
+;; theme
+(load-theme 'modus-vivendi)
+
+;; font
+(set-face-attribute 'default nil :height 160)
+
 ;; === CORE TOOLS ===
 ;; Minibuffer Completion Framework
 (use-package vertico
@@ -132,7 +138,9 @@
   :pin melpa-stable
   :mode ("\\.md\\'" . markdown-mode))
 
-;; === C++ ===
+;; === LSP-EGLOT ===
+
+;; === BASH/SCRIPTING ===
 
 ;; === WEB DEVELOPMENT ===
 

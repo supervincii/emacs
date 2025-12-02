@@ -110,11 +110,13 @@
 (use-package marginalia
   :init (marginalia-mode))
 
-;; TODO: Setup basic keybindings for consult
-(use-package consult)
-;; consult-imenu
-;; consult-grep
-;; consult-buffer
+(use-package consult
+  :bind
+  ("C-x b" . consult-buffer)     ;; ORIGINAL: switch-to-buffer
+  ("C-x r b" . consult-bookmark) ;; ORIGINAL: bookmark-jump
+  ("M-g i" . consult-imenu)      ;; ORIGINAL: imenu
+  ("M-s d" . consult-find)
+  ("M-s g" . consult-grep))
 
 ;; In-buffer completion
 (use-package corfu
@@ -144,11 +146,27 @@
   :pin melpa-stable
   :mode ("\\.md\\'" . markdown-mode))
 
-;; === LSP-EGLOT ===
+;; === LSP (EGLOT) ===
+(use-package eglot
+  :ensure nil                  ;; Built-in to Emacs 29+
+  :hook
+  (bash-ts-mode . eglot-ensure)
+  :config
+  (setq eglot-autoshutdown t)) ;; Shutdown server when last managed buffer is closed
+
+;; === TREESITTER ===
+(use-package treesit-auto
+  :custom
+  (treesit-auto-install 'prompt)
+  :config
+  (treesit-auto-add-to-auto-mode-alist 'all)
+  (global-treesit-auto-mode))
 
 ;; === BASH/SCRIPTING ===
 
 ;; === WEB DEVELOPMENT ===
+
+;; === FLYCHECK (SYNTAX CHECKING) ===
 
 ;; === ORG-MODE ===
 (use-package toc-org

@@ -77,6 +77,12 @@
 (require 'use-package)
 (setq use-package-always-ensure t)
 
+;; === exec-path-from-shell ===
+(use-package exec-path-from-shell
+  :if (or (memq window-system '(mac ns x pgtk))
+          (daemonp))
+  :config (exec-path-from-shell-initialize))
+
 ;; === UI & UX ===
 ;; helpful: Alternative to Emacs help that provides more contextual information.
 (use-package helpful

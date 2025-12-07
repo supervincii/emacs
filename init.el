@@ -1,4 +1,9 @@
-;;; GENERAL EMACS SETTINGS
+;;; init.el --- supervincii Emacs Configuration -*- lexical-binding: t -*-
+
+;;; Commentary:
+;; Super Emacs config by Vinci
+
+;;; Code:
 
 ;; Speed up initial startup
 ;; Set garbage collection less frequently
@@ -24,7 +29,7 @@
 ;; Backup files config
 (setq
  make-backup-files t
- backup-directory-alist '(("." . ,(expand-file-name "backups/" user-emacs-directory)))
+ backup-directory-alist `(("." . ,(expand-file-name "backups/" user-emacs-directory)))
  version-control t
  kept-new-versions 6
  kept-old-versions 2
@@ -34,7 +39,7 @@
  cursor-in-non-selected-windows nil ;; Do not show cursor in non-selected windows
  fill-column 120		    ;; Set fill column at line 120
  line-spacing 8			    ;; Put more padding between lines for readability
- indent-tabs-mode nil)		    ;; Use spaces instead of tabs for indentation
+ indent-tabs-mode nil)              ;; Use spaces instead of tabs for indentation
 
 (tool-bar-mode -1)                    ;; Disable the tool bar
 (menu-bar-mode -1)                    ;; Disable the menu bar
@@ -79,17 +84,20 @@
 
 ;; === exec-path-from-shell ===
 (use-package exec-path-from-shell
-  :if (or (memq window-system '(mac ns x pgtk))
-          (daemonp))
-  :config (exec-path-from-shell-initialize))
+  :if
+  (or (memq window-system '(mac ns x pgtk))
+      (daemonp))
+  :config
+  (exec-path-from-shell-initialize))
 
 ;; === UI & UX ===
 ;; helpful: Alternative to Emacs help that provides more contextual information.
 (use-package helpful
-  :bind (("C-h f" . helpful-callable)
-         ("C-h v" . helpful-variable)
-         ("C-h k" . helpful-key)
-         ("C-h x" . helpful-command)))
+  :bind
+  (("C-h f" . helpful-callable)
+   ("C-h v" . helpful-variable)
+   ("C-h k" . helpful-key)
+   ("C-h x" . helpful-command)))
 
 ;; theme
 (load-theme 'modus-vivendi)
@@ -100,7 +108,8 @@
 ;; === CORE TOOLS ===
 ;; Minibuffer Completion Framework
 (use-package vertico
-  :init (vertico-mode))
+  :init
+  (vertico-mode))
 
 (use-package orderless
   :custom
@@ -108,7 +117,8 @@
   (completion-category-overrides '((file (styles partial-completion)))))
 
 (use-package marginalia
-  :init (marginalia-mode))
+  :init
+  (marginalia-mode))
 
 (use-package consult
   :bind
@@ -120,7 +130,8 @@
 
 ;; In-buffer completion
 (use-package corfu
-  :init (global-corfu-mode)
+  :init
+  (global-corfu-mode)
   :custom
   (corfu-auto t)
   (corfu-auto-delay 0.2))
@@ -134,7 +145,8 @@
 
 (use-package kind-icon
   :after corfu
-  :config (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
+  :config
+  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
 
 ;; Git
 (use-package magit)
@@ -142,17 +154,23 @@
 (use-package forge
   :after magit
   :pin melpa-stable)
+
 (use-package markdown-mode
   :pin melpa-stable
-  :mode ("\\.md\\'" . markdown-mode))
+  :mode
+  ("\\.md\\'" . markdown-mode))
 
 ;; === LSP (EGLOT) ===
 (use-package eglot
-  :ensure nil                  ;; Built-in to Emacs 29+
+  :ensure nil                        ;; Built-in to Emacs 29+
   :hook
   (bash-ts-mode . eglot-ensure)
   :config
-  (setq eglot-autoshutdown t)) ;; Shutdown server when last managed buffer is closed
+  (setq eglot-autoshutdown t)        ;; Shutdown server when last managed buffer is closed
+  (add-hook 'eglot-managed-mode-hook ;; Disable Flymake in Eglot buffers (flycheck-eglot will handle diagnostics)
+            (lambda ()
+              (when (bound-and-true-p flycheck-mode)
+                (flymake-mode -1)))))
 
 ;; === TREESITTER ===
 (use-package treesit-auto
@@ -167,8 +185,22 @@
 ;; === WEB DEVELOPMENT ===
 
 ;; === FLYCHECK (SYNTAX CHECKING) ===
+;;; Syntax Checkers
+;;; bash: shellcheck
+(use-package flycheck
+  :hook
+  (prog-mode . flycheck-mode))
+
+(use-package flycheck-eglot
+  :after
+  (flycheck eglot)
+  :config
+  (global-flycheck-eglot-mode 1))
 
 ;; === ORG-MODE ===
 (use-package toc-org
-  :hook (org-mode . toc-org-enable))
+  :hook
+  (org-mode . toc-org-enable))
 
+(provide 'init)
+;;; init.el ends here

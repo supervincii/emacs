@@ -39,7 +39,8 @@
  cursor-in-non-selected-windows nil ;; Do not show cursor in non-selected windows
  fill-column 120		    ;; Set fill column at line 120
  line-spacing 8			    ;; Put more padding between lines for readability
- indent-tabs-mode nil)              ;; Use spaces instead of tabs for indentation
+ indent-tabs-mode nil               ;; Use spaces instead of tabs for indentation
+ tab-width 4)                       ;; Set default tab width to 4 chars
 
 (tool-bar-mode -1)                    ;; Disable the tool bar
 (menu-bar-mode -1)                    ;; Disable the menu bar
@@ -47,7 +48,6 @@
 (blink-cursor-mode -1)                ;; Disable blinking cursor
 (tooltip-mode -1)                     ;; Display tips in the minibuffer
 (column-number-mode)                  ;; Show column number in the modeline
-(global-display-line-numbers-mode -1) ;; Do not show line numbers everywhere
 (delete-selection-mode t)             ;; Delete selecteion when typing a new text
 (electric-pair-mode t)                ;; Automatically insert paren pairs
 (pixel-scroll-precision-mode t)       ;; Smoother scrolling
@@ -165,6 +165,7 @@
   :ensure nil                        ;; Built-in to Emacs 29+
   :hook
   (bash-ts-mode . eglot-ensure)
+  (go-mode . eglot-ensure)
   :config
   (setq eglot-autoshutdown t)        ;; Shutdown server when last managed buffer is closed
   (add-hook 'eglot-managed-mode-hook ;; Disable Flymake in Eglot buffers (flycheck-eglot will handle diagnostics)
@@ -177,10 +178,40 @@
   :custom
   (treesit-auto-install 'prompt)
   :config
+  ;; Exclude go and gomod from treesit auto languages since I will be using go-mode
+  (setq treesit-auto-langs
+        (seq-difference treesit-auto-langs '(go gomod)))
   (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode))
 
-;; === BASH/SCRIPTING ===
+;; === GO ===
+;;; Installed Go packages:
+;;; - gopls
+;;; - goimports
+(use-package go-mode
+  :mode "\\.go\\'"
+  :config
+  (setq gofmt-command "goimports")           ;; For managing imports as well
+  (add-hook 'go-mode-hook
+            (lambda ()
+              (setq indent-tabs-mode t)      ;; Go convention uses tabs instead of spaces
+              (setq tab-width 4)))
+  (add-hook 'before-save-hook
+            (lambda ()
+              (when (eq major-mode 'go-mode) ;; Run gofmt-before-save to auto format Go code according to gofmt rules
+                (gofmt-before-save)))))
+
+;; === COMBOBULATE ===
+
+;;; Install combobulate from GitHub first
+;;; combobulate is not available through MELPA
+(unless (package-installed-p 'combobulate)
+  (package-vc-install "https://github.com/mickeynp/combobulate"))
+
+(use-package combobulate
+  :ensure nil
+  :hook
+  (go-mode . combobulate-mode))
 
 ;; === WEB DEVELOPMENT ===
 

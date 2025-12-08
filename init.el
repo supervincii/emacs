@@ -203,4 +203,10 @@
   (org-mode . toc-org-enable))
 
 (provide 'init)
+
+;; === MISC ===
+;;; tmr: Timer
+(use-package tmr
+  :bind
+  ("C-c t" . tmr))
 ;;; init.el ends here

@@ -5,7 +5,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(cape consult corfu exec-path-from-shell flycheck-eglot forge helpful kind-icon marginalia orderless toc-org
+   '(cape consult corfu exec-path-from-shell flycheck-eglot forge helpful kind-icon marginalia orderless tmr toc-org
           treesit-auto vertico)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
